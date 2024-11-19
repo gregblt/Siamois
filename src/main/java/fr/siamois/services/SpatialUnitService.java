@@ -14,6 +14,7 @@ import java.util.List;
 @Service
 public class SpatialUnitService {
 
+
     private final SpatialUnitRepository spatialUnitRepository;
 
     public SpatialUnitService(SpatialUnitRepository spatialUnitRepository) {
