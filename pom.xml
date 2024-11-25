@@ -41,6 +41,7 @@
         <tomcat-embed-jasper.version>11.0.0-M26</tomcat-embed-jasper.version>
         <jsf-impl.version>2.2.20</jsf-impl.version>
         <jts.version>1.20.0</jts.version>
+        <prettyfaces.version>3.3.2</prettyfaces.version>
         <mockito.version>5.14.2</mockito.version>
 
     </properties>
@@ -63,6 +64,14 @@
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>primefaces-spring-boot-starter</artifactId>
+        </dependency>
+
+
+
+        <dependency>
+            <groupId>com.ocpsoft</groupId>
+            <artifactId>prettyfaces-core</artifactId>
+            <version>3.3.2</version>
         </dependency>
 
         <dependency>
@@ -175,6 +184,18 @@
             <groupId>jakarta.json</groupId>
             <artifactId>jakarta.json-api</artifactId>
             <version>${jakarta.json-api.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.parsson</groupId>
+            <artifactId>parsson</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>5.3.0</version>
         </dependency>
 
         <dependency>

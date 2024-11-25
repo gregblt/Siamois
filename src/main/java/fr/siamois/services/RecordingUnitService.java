@@ -31,4 +31,8 @@ public class RecordingUnitService {
         return recordingUnitRepository.findAllBySpatialUnitId(spatialUnit.getId());
     }
 
+    public RecordingUnit save(RecordingUnit recordingUnit) {
+        return recordingUnitRepository.save(recordingUnit);
+    }
+
 }

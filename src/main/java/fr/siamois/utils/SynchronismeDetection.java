@@ -1,10 +1,27 @@
 package fr.siamois.utils;
 
+import fr.siamois.SiamoisApplication;
+import fr.siamois.models.Concept;
+import fr.siamois.models.RecordingUnit;
+import fr.siamois.models.StratigraphicRelationship;
+import fr.siamois.models.StratigraphicRelationshipKey;
+import fr.siamois.repositories.RecordingUnitRepository;
+import fr.siamois.services.RecordingUnitService;
+import fr.siamois.services.SpatialUnitService;
+import fr.siamois.utils.stratigraphy.AdjacencyMatrix;
+import fr.siamois.utils.stratigraphy.GenerateStratigraphyTestData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Service
 public class SynchronismeDetection {
+
 
     private static final int ANTERIOR_OR_POSTERIOR = 1; // Valeur pour un synchronisme
     private static final int SYNCHRONISME = 2; // Valeur pour un synchronisme
@@ -79,20 +96,20 @@ public class SynchronismeDetection {
                             }
                             matrice[i][k] = matrice[j][k] + 1;
                             System.out.println("Updates path:");
-                            afficherMatrice(matrice);
+                            //afficherMatrice(matrice);
                             updated = true;
                         }
                     }
                 }
             }
             System.out.println("Updates end scan:");
-            afficherMatrice(matrice);
+            //afficherMatrice(matrice);
         }
         while(updated);
 
     }
 
-    public static void computeDistance2(int[][] matrice) {
+    public static void relationOrdre(int[][] matrice) {
         int n = matrice.length;
         boolean updated;
         int[][] matriceNew = matrice;
@@ -113,7 +130,7 @@ public class SynchronismeDetection {
                             if (matrice[j][k] > 0 && matrice[i][k] <= matrice[j][k]) {
                                 matrice[i][k] = matrice[j][k] + 1;
                                 System.out.println("Updates path:");
-                                afficherMatrice(matrice);
+                                //afficherMatrice(matrice);
                                 updated = true;
                             }
                         }
@@ -122,7 +139,7 @@ public class SynchronismeDetection {
                 }
             }
             System.out.println("Updates end scan:");
-            afficherMatrice(matrice);
+            //afficherMatrice(matrice);
         }
         while(updated);
 
@@ -140,14 +157,14 @@ public class SynchronismeDetection {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     if (matrice[i][j] == SYNCHRONISME) {
-                        System.out.println(i+1);
-                        System.out.println(j+1);
+                        //System.out.println(i+1);
+                        //System.out.println(j+1);
                         // Symétrie
                         if (matrice[j][i] <= ANTERIOR_OR_POSTERIOR) { // If i,j has not been marked as synchronous
                             matrice[j][i] = SYNCHRONISME;
                             updated = true;
                             System.out.println("Updates 1:");
-                            afficherMatrice(matrice);
+                            //afficherMatrice(matrice);
                         }
 
                         // Transitivité
@@ -156,18 +173,18 @@ public class SynchronismeDetection {
                                 matrice[i][k] = SYNCHRONISME;
                                 updated = true;
                                 System.out.println("Updates 2:");
-                                afficherMatrice(matrice);
+                                //afficherMatrice(matrice);
                             }
                         }
                         matrice[i][j] = PROCESSED; // Marquer le synchronisme traité
                         System.out.println("Updates:");
-                        afficherMatrice(matrice);
+                        //afficherMatrice(matrice);
 
                     }
                 }
             }
             System.out.println("Updates end scan:");
-            afficherMatrice(matrice);
+            //afficherMatrice(matrice);
         } while (updated);
 
 
@@ -187,14 +204,14 @@ public class SynchronismeDetection {
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
                     if (matrice[i][j] == SYNCHRONISME && i != j) { // if i,j is synchronous but not processed
-                        System.out.println(i+1);
-                        System.out.println(j+1);
+                        //System.out.println(i+1);
+                        //System.out.println(j+1);
                         // Symétrie
                         if (matrice[j][i] <= ANTERIOR_OR_POSTERIOR) { // If j,i has not been marked as proccessed or as synchronous
                             matrice[j][i] = SYNCHRONISME;
                             updated = true;
-                            System.out.println("Updates 1:");
-                            afficherMatrice(matrice);
+                            //System.out.println("Updates 1:");
+                            //afficherMatrice(matrice);
                         }
 
                         // Transitivité
@@ -203,19 +220,19 @@ public class SynchronismeDetection {
                             && matrice[i][k] <= ANTERIOR_OR_POSTERIOR) { // if not marked as synchronous yet
                                 matrice[i][k] = SYNCHRONISME;
                                 updated = true;
-                                System.out.println("Updates 2:");
-                                afficherMatrice(matrice);
+                                //System.out.println("Updates 2:");
+                                //afficherMatrice(matrice);
                             }
                         }
                         matrice[i][j] = PROCESSED; // Marquer le synchronisme traité
-                        System.out.println("Updates:");
-                        afficherMatrice(matrice);
+                        //System.out.println("Updates:");
+                        //afficherMatrice(matrice);
 
                     }
                 }
             }
-            System.out.println("Updates end scan:");
-            afficherMatrice(matrice);
+            //System.out.println("Updates end scan:");
+            //afficherMatrice(matrice);
         } while (updated);
 
 
@@ -291,19 +308,75 @@ public class SynchronismeDetection {
         }
     }
 
-    public static void main(String[] args) {
+
+
+    public static void main(String[] args) throws IOException {
+
+        //AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(SiamoisApplication.class);
+        //RecordingUnitService recordingUnitService = context.getBean(RecordingUnitService.class);
+        //recordingUnitService.save(r1);
+        RecordingUnit ru1 = new RecordingUnit();
+        RecordingUnit ru2 = new RecordingUnit();
+        RecordingUnit ru3 = new RecordingUnit();
+        RecordingUnit ru4 = new RecordingUnit();
+        RecordingUnit ru5 = new RecordingUnit();
+        RecordingUnit ru6 = new RecordingUnit();
+        RecordingUnit ru7 = new RecordingUnit();
+        RecordingUnit ru8 = new RecordingUnit();
+        RecordingUnit ru9 = new RecordingUnit();
+
+        ArrayList<RecordingUnit> nodes = new ArrayList<>();
+        nodes.add(ru1);
+        nodes.add(ru2);
+        nodes.add(ru3);
+        nodes.add(ru4);
+        nodes.add(ru5);
+        nodes.add(ru6);
+        nodes.add(ru7);
+        nodes.add(ru8);
+        nodes.add(ru9);
+
+        Concept relationshipType = new Concept();
+        relationshipType.setLabel("Anterior");
+        StratigraphicRelationship sr = new StratigraphicRelationship();
+        StratigraphicRelationshipKey key = new StratigraphicRelationshipKey();
+//        key.setFk_recording_unit_1_id(r1.getId());
+//        key.setFk_recording_unit_2_id(r2.getId());
+        sr.setRecording_unit_1(ru1);
+        sr.setRecording_unit_2(ru2);
+        sr.setRelationship(relationshipType);
+
+        ArrayList<StratigraphicRelationship> edges = new ArrayList<>();
+        edges.add(sr);
+
+        GenerateStratigraphyTestData.NodeEdge nodeEdge = GenerateStratigraphyTestData.generateData(10);
+
+
+        for(StratigraphicRelationship edge: nodeEdge.edges) {
+            System.out.println(edge);
+        }
+
+        AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(nodeEdge.nodes, nodeEdge.edges);
+        adjacencyMatrix.exportGraphAsJson();
+        adjacencyMatrix.exportGraphAsXlsx();
+        int[][] matrice = adjacencyMatrix.getMatrix();
+        //afficherMatrice(matrix.getMatrix());
+
+        //System.exit(1);
+
+
         // Exemple de matrice initiale
-        int[][] matrice = {
-                {0, 0, 0, 0, 0, 0, 0, 0, 1},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 0, 0, 0, 0, 0, 0, 0, 0},
-                {1, 1, 1, 1, 0, 0, 0, 0, 0},
-                {0, 0, 1, 1, 1, 0, 0, 0, 0},
-                {1, 0, 1, 0, 0, 1, 0, 2, 0},
-                {1, 0, 0, 1, 0, 1, 0, 0, 0},
-                {0, 0, 1, 1, 1, 1, 1, 1, 0},
-        };
+//        int[][] matrice = {
+//                {0, 0, 0, 0, 0, 0, 0, 0, 1},
+//                {1, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {1, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {1, 0, 0, 0, 0, 0, 0, 0, 0},
+//                {1, 1, 1, 1, 0, 0, 0, 0, 0},
+//                {0, 0, 1, 1, 1, 0, 0, 0, 0},
+//                {1, 0, 1, 0, 0, 1, 0, 2, 0},
+//                {1, 0, 0, 1, 0, 1, 0, 0, 0},
+//                {0, 0, 1, 1, 1, 1, 1, 1, 0},
+//        };
 
 /*        int[][] matrice = {
                 {0, 0, 0, 0, 0, 0, 2},
@@ -325,17 +398,32 @@ public class SynchronismeDetection {
 //                {0, 1, 0, 2, 0, 0, 0},
 //        };
 
+//        int[][] matrice = {
+//                {0, 0, 0, 0, 0, 0, 0, 0},
+//                {1, 0, 0, 0, 0, 0, 0, 0},
+//                {0, 1, 0, 0, 1, 0, 0, 0},
+//                {0, 0, 1, 0, 0, 0, 0, 0},
+//                {0, 0, 0, 1, 0, 0, 0, 0},
+//                {0, 1, 0, 0, 0, 0, 1, 0},
+//                {0, 0, 0, 0, 0, 1, 0, 0},
+//                {0, 0, 1, 0, 0, 0, 0, 0},
+//        };
+
+        // From a list of relationships, create the matrix
+
         System.out.println("Matrice initiale :");
-        afficherMatrice(matrice);
+
+
+        //afficherMatrice(matrice);
 
         detectSynchronousRelationshipsV2(matrice);
 
         System.out.println("\nMatrice après détection des synchronismes :");
-        afficherMatrice(matrice);
+        //afficherMatrice(matrice);
 
         fusionnerSynchronismesV2(matrice);
         System.out.println("\nMatrice finale :");
-        afficherMatrice(matrice);
+        //afficherMatrice(matrice);
 
         List<List<Integer>> cycles = detectAllCycles(matrice);
 
@@ -346,4 +434,5 @@ public class SynchronismeDetection {
             System.out.println(cycle);
         }
     }
+
 }
