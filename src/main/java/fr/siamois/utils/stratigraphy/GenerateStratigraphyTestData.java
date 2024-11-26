@@ -54,10 +54,10 @@ public class GenerateStratigraphyTestData {
                     nodes.add(newNode);
                     newNodesToProcess.add(newNode);
                     StratigraphicRelationship newEdge = new StratigraphicRelationship();
-                    newEdge.setRecording_unit_1(node);
-                    newEdge.setRecording_unit_2(newNode);
+                    newEdge.setRecording_unit_1(newNode);
+                    newEdge.setRecording_unit_2(node);
                     int type = getRandomNumber(1,3);
-                    if(type == 1) {
+                    if(type == 1 || i == 0) {
                         newEdge.setRelationship(relationshipType1);
                     } else {
                         newEdge.setRelationship(relationshipType2);
@@ -72,12 +72,10 @@ public class GenerateStratigraphyTestData {
 
         // add a cycle
         StratigraphicRelationship newEdge = new StratigraphicRelationship();
-        newEdge.setRecording_unit_1(nodes.get(nodes.size()-1));
-        newEdge.setRecording_unit_2(nodes.get(0));
+        newEdge.setRecording_unit_2(nodes.get(nodes.size()-1));
+        newEdge.setRecording_unit_1(nodes.get(0));
         newEdge.setRelationship(relationshipType1);
         edges.add(newEdge);
-
-        // Generate data for n recording units
 
         return new NodeEdge(nodes, edges);
     }

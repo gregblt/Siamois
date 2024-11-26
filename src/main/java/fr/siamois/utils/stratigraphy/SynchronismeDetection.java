@@ -1,17 +1,9 @@
-package fr.siamois.utils;
+package fr.siamois.utils.stratigraphy;
 
-import fr.siamois.SiamoisApplication;
 import fr.siamois.models.Concept;
 import fr.siamois.models.RecordingUnit;
 import fr.siamois.models.StratigraphicRelationship;
 import fr.siamois.models.StratigraphicRelationshipKey;
-import fr.siamois.repositories.RecordingUnitRepository;
-import fr.siamois.services.RecordingUnitService;
-import fr.siamois.services.SpatialUnitService;
-import fr.siamois.utils.stratigraphy.AdjacencyMatrix;
-import fr.siamois.utils.stratigraphy.GenerateStratigraphyTestData;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -284,9 +276,15 @@ public class SynchronismeDetection {
                         for (int k = 0; k < n; k++) {
                             if (matrice[j][k] == ANTERIOR_OR_POSTERIOR) { // Relation antérieure
                                 matrice[i][k] = ANTERIOR_OR_POSTERIOR;
+                                if(i == k) {
+                                    System.out.println("Boucle entre "+i+" et"+j);
+                                }
                             }
                             if (matrice[k][j] == ANTERIOR_OR_POSTERIOR) { // Relation postérieure
                                 matrice[k][i] = ANTERIOR_OR_POSTERIOR;
+                                if(i == k) {
+                                    System.out.println("Boucle entre "+i+" et"+j);
+                                }
                             }
                         }
 
@@ -353,12 +351,14 @@ public class SynchronismeDetection {
 
 
         for(StratigraphicRelationship edge: nodeEdge.edges) {
-            System.out.println(edge);
+            //System.out.println(edge);
         }
 
         AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(nodeEdge.nodes, nodeEdge.edges);
+        adjacencyMatrix.importGraphFromXlsx("C:\\Users\\pccnr\\Documents\\Stratifiant\\stratifiant_0_5\\StratiClasseur.xlsx");
         adjacencyMatrix.exportGraphAsJson();
-        adjacencyMatrix.exportGraphAsXlsx();
+        String filename = "C:\\Users\\pccnr\\Documents\\code\\Siamois\\src\\main\\java\\fr\\siamois\\utils\\stratigraphy\\graph.xlsx";
+        adjacencyMatrix.exportGraphAsXlsx(filename);
         int[][] matrice = adjacencyMatrix.getMatrix();
         //afficherMatrice(matrix.getMatrix());
 
