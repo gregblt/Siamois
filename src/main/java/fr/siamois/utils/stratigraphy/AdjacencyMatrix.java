@@ -50,7 +50,7 @@ public class AdjacencyMatrix {
         jsonObjectBuilder.add("edges", edgesBuilder);
         JsonObject graphObject = jsonObjectBuilder.build();
 
-        FileWriter fileWriter = new FileWriter("C:\\Users\\pccnr\\Documents\\code\\Siamois\\src\\main\\java\\fr\\siamois\\utils\\stratigraphy\\graph.json");
+        FileWriter fileWriter = new FileWriter("C:\\Users\\pccnr\\Documents\\code\\Siamois\\src\\main\\java\\fr\\siamois\\utils\\stratigraphy\\data\\graph.json");
         JsonWriter jsonWriter = Json.createWriter(fileWriter);
         jsonWriter.write(graphObject);
         jsonWriter.close();
@@ -80,7 +80,7 @@ public class AdjacencyMatrix {
             RecordingUnit node = new RecordingUnit();
             node.setId((long) nodeIndex);
             String nodeName = row.getCell(0).getStringCellValue();
-            System.out.println(nodeName);
+            //System.out.println(nodeName);
             indexMap.put(nodeName, node );
             nodes.add(node);
             nodeIndex++;
@@ -95,7 +95,7 @@ public class AdjacencyMatrix {
         relationshipType2.setLabel("Synchronous");
 
         firstRow = true;
-        for (Row row : sheetUS) {
+        for (Row row : sheetRel) {
             if (firstRow) {
                 firstRow = false; // Skip the first row
                 continue;
@@ -103,17 +103,19 @@ public class AdjacencyMatrix {
             // New rel
             StratigraphicRelationship edge = new StratigraphicRelationship();
             String ru1Name = row.getCell(0).getStringCellValue();
+            //System.out.println(ru1Name);
             String relType = row.getCell(1).getStringCellValue();
             String ru2Name = row.getCell(2).getStringCellValue();
             // find node RU1
             edge.setRecording_unit_1(indexMap.get(ru1Name));
             edge.setRecording_unit_2(indexMap.get(ru2Name));
-            if(Objects.equals(relType, "sous")) {
+            if(Objects.equals(relType, "sous") || Objects.equals(relType, "pt.être sous")) {
                 edge.setRelationship(relationshipType1);
             }
-            else if(Objects.equals(relType, "synchrone avec")) {
+            else if(Objects.equals(relType, "synchrone avec") || Objects.equals(relType, "pt.être synchrone")) {
                 edge.setRelationship(relationshipType2);
             }
+
 
             edges.add(edge);
 

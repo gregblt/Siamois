@@ -357,7 +357,7 @@ public class SynchronismeDetection {
         AdjacencyMatrix adjacencyMatrix = new AdjacencyMatrix(nodeEdge.nodes, nodeEdge.edges);
         adjacencyMatrix.importGraphFromXlsx("C:\\Users\\pccnr\\Documents\\Stratifiant\\stratifiant_0_5\\StratiClasseur.xlsx");
         adjacencyMatrix.exportGraphAsJson();
-        String filename = "C:\\Users\\pccnr\\Documents\\code\\Siamois\\src\\main\\java\\fr\\siamois\\utils\\stratigraphy\\graph.xlsx";
+        String filename = "C:\\Users\\pccnr\\Documents\\code\\Siamois\\src\\main\\java\\fr\\siamois\\utils\\stratigraphy\\data\\graph.xlsx";
         adjacencyMatrix.exportGraphAsXlsx(filename);
         int[][] matrice = adjacencyMatrix.getMatrix();
         //afficherMatrice(matrix.getMatrix());
